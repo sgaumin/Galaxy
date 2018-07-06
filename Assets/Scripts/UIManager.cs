@@ -5,22 +5,32 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 
+    public static UIManager instance;
+
 	public Text playerScore;
 
 	private int score1;
 	private int score2;
 
-	// Use this for initialization
-	void Start () {
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(instance);
+        }
+        else
+        {
+            Destroy(this);
+        }
+    }
+
+    // Use this for initialization
+    void Start () {
 		score1 = 0;
 		score2 = 0;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
 	public void changeScore(int player){
 
 		if (player == 1) {

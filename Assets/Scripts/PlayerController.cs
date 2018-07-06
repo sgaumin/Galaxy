@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
@@ -17,52 +16,46 @@ public class PlayerController : MonoBehaviour {
 	public float timeToReloadBoost;
 	public float[] timeToReloadBoostTemp;
 	public float timeToWin;
+	public string jumpCmd;
+	public string fireCmd;
+	public string horizontalCmd;
 
 	private Animator anim;
-	private UIManager theUI;
+	private Rigidbody2D theRB;
+	private MotherStarHeart theMSHM;
 	private int nbBoostmax = 3;
 	private int nbBoost;
 	private float moveDurationTemp;
 	private float waitDurationTemp;
 	private float timeToShootTemp;
-	private Rigidbody2D theRB;
+	private float timeToWinTemp;
 	private bool moving;
 	private bool shooting;
-	private MotherStarHeartManager theMSHM;
-	private string jumpCmd;
-	private string fireCmd;
-	private string horizontalCmd;
-	private float timeToWinTemp;
 
 	// Use this for initialization
 	void Start () {
 		theRB = GetComponent<Rigidbody2D> ();
 		anim = GetComponentInChildren<Animator> ();
-		theMSHM = FindObjectOfType<MotherStarHeartManager> ();
-		theUI = FindObjectOfType<UIManager> ();
+		theMSHM = FindObjectOfType<MotherStarHeart> ();
+
 		moving = false;
 		shooting = false;
 		moveDurationTemp = -1f;
 		timeToShootTemp = -1f;
 		nbBoost = nbBoostmax;
+		timeToWinTemp = timeToWin;  // Variable a mettre dans le GameManager
 
-		timeToWinTemp = timeToWin;
-
+        // A indiquer dans l'editeur
 		if (playerNumber == 1) {
-
-			jumpCmd = "Jump p1";
-			fireCmd = "Fire p1";
-			horizontalCmd = "Horizontal p1";
-
+			jumpCmd = "Jump";
+			fireCmd = "Fire1";
+			horizontalCmd = "Horizontal";
 
 		} else if (playerNumber == 2) {
-
 			jumpCmd = "Jump p2";
 			fireCmd = "Fire p2";
 			horizontalCmd = "Horizontal p2";
-
 		}
-
 	}
 	
 	// Update is called once per frame
@@ -88,8 +81,9 @@ public class PlayerController : MonoBehaviour {
 					timeToReloadBoostTemp[2] = timeToReloadBoost;
 				}
 				nbBoost--;
-				Instantiate (boostEffect, transform.position, Quaternion.AngleAxis(90, transform.right) * transform.rotation);
-			}
+				GameObject effect = Instantiate (boostEffect, transform.position, Quaternion.AngleAxis(90, transform.right) * transform.rotation);
+                //effect.transform.SetParent(transform.parent);
+            }
 		}
 			
 //		if (nbBoost < nbBoostmax) {
@@ -116,8 +110,9 @@ public class PlayerController : MonoBehaviour {
 
 		if (!shooting) {
 			if (Input.GetButton(fireCmd)) {
-				Instantiate(objectBullet, transform.up + transform.position, Quaternion.AngleAxis(90, Vector3.forward) * transform.rotation);
-				shooting = true;
+				GameObject bullet = Instantiate(objectBullet, transform.up + transform.position, Quaternion.AngleAxis(90, Vector3.forward) * transform.rotation);
+                bullet.transform.SetParent(transform.parent);
+                shooting = true;
 				timeToShootTemp = timeToShoot;
 			}
 		} else if(shooting){
@@ -133,9 +128,9 @@ public class PlayerController : MonoBehaviour {
 			if (timeToWinTemp < 0) {
 				
 				if (playerNumber == 1) {
-					theUI.changeScore (1);
+					UIManager.instance.changeScore (1);
 				} else if (playerNumber == 2) {
-					theUI.changeScore (2);
+                    UIManager.instance.changeScore (2);
 				}
 
 
@@ -160,7 +155,8 @@ public class PlayerController : MonoBehaviour {
 			Restart();
 		}
 	}
-		
+	
+    // TO DO - A mettre dans un script GameManager
 	private void Restart(){
 		// Stop Star Heart following
 		theMSHM.resetStar();

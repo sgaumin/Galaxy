@@ -5,15 +5,13 @@ using UnityEngine;
 public class BulletController : MonoBehaviour {
 
 	public float moveSpeed;
-	public float numberDamage;
+	public int numberDamage;
 
 	private Rigidbody2D theRD;
-	private MotherStarManager theMSM;
 
 	// Use this for initialization
 	void Start () {
 		theRD = GetComponent<Rigidbody2D> ();
-		theMSM = FindObjectOfType<MotherStarManager> ();
 	}
 	
 	// Update is called once per frame
@@ -26,7 +24,7 @@ public class BulletController : MonoBehaviour {
 			Destroy (gameObject);
 		} else if (other.gameObject.tag == "Mother Star") {
 			Destroy (gameObject);
-			theMSM.AddDamage (numberDamage);
+            other.GetComponent<MotherStar>().AddDamage (numberDamage);
 		}
 	}
 }

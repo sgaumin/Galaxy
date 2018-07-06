@@ -2,21 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimeDestroyObject : MonoBehaviour {
+public class TimeDestroyObject : MonoBehaviour
+{
+    public float timeToDestroy;
 
-	public float timeToDestroy;
-	private float timeToDestroyTemp;
+    // Use this for initialization
+    void Start()
+    {
+        StartCoroutine(TimeToDestroy());
+    }
 
-	// Use this for initialization
-	void Start () {
-		timeToDestroyTemp = timeToDestroy;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		timeToDestroyTemp -= Time.deltaTime;
-		if (timeToDestroyTemp < 0f) {
-			Destroy (gameObject);
-		}
-	}
+    private IEnumerator TimeToDestroy()
+    {
+        bool destroyed = false;
+
+        while (true)
+        {
+            if (!destroyed)
+            {
+                destroyed = true;
+                yield return new WaitForSeconds(timeToDestroy);
+            }
+            else
+            {
+                Destroy(gameObject);
+                yield break;
+            }
+        }
+    }
 }

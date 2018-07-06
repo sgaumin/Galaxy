@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MotherStarHeartManager : MonoBehaviour {
+public class MotherStarHeart : MonoBehaviour {
 
-	public float moveSpeed;
-	public GameObject spawnPoint; 
 	public bool captured;
+	public float moveSpeed;
+	public Transform spawnPoint; 
+	public Transform followTarget;
 
-	public GameObject followTarget;
 	private Vector3 targetPos;
 
 	// Use this for initialization
@@ -19,14 +19,14 @@ public class MotherStarHeartManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (captured) {
-			targetPos = new Vector3 (followTarget.transform.position.x, followTarget.transform.position.y, transform.position.z);
+			targetPos = new Vector3 (followTarget.position.x, followTarget.position.y, transform.position.z);
 			transform.position = Vector3.Lerp (transform.position, targetPos, moveSpeed * Time.deltaTime);
 		}
 	}
 
 	void OnTriggerEnter2D(Collider2D other){
 		if (other.tag == "Player") {
-			followTarget = other.gameObject;
+			followTarget = other.gameObject.transform;
 			captured = true;
 		}
 	}
@@ -38,6 +38,6 @@ public class MotherStarHeartManager : MonoBehaviour {
 	public void resetPosition(){
 		// Restart position
 		gameObject.transform.position = spawnPoint.transform.position;
-		resetStar ();
-	}
+        resetStar();
+    }
 }	
